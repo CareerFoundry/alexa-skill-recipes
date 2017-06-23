@@ -1,0 +1,17 @@
+ChooseTypeIntent {mealType}
+ChooseTypeIntent I want to eat {mealType}
+ChooseTypeIntent Give me a {mealType} recipe
+ChooseTypeIntent {mealType} is what I really need right now
+
+InstructionsIntent Repeat
+InstructionsIntent Repeat this step
+InstructionsIntent Explain that to me again
+InstructionsIntent I didn't hear you there
+InstructionsIntent What
+InstructionsIntent One more time please
+
+NextStepIntent Okay
+NextStepIntent Got it
+NextStepIntent Next
+NextStepIntent Next step
+NextStepIntent Keep going
