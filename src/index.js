@@ -10,6 +10,7 @@ const SKILL_NAME = "Five Minute Recipes";
 const HELP_MESSAGE = "I know how to make tasty meals in less than 5 minutes.";
 const HELP_REPROMPT = "Just ask me for a recipe.";
 const STOP_MESSAGE = "Fine. Eat something else then.";
+const CANCEL_MESSAGE = "Ok.";
 
 const CHOOSE_TYPE_MESSAGE = "Welcome to 5 minute recipes! I know some cool foods. What kind of recipe are you looking for?";
 const REPROMPT_TYPE = "You can choose a breakfast, lunch, snack or dinner recipe.";
@@ -161,7 +162,7 @@ const newSessionhandlers = {
     this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
-    this.emit(':tell', STOP_MESSAGE);
+    this.emit(':tell', CANCEL_MESSAGE);
   },
   'AMAZON.StopIntent': function(){
     this.emit(':tell', STOP_MESSAGE);
@@ -184,6 +185,15 @@ const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
       this.emit(':ask', MEALTYPE_NOT_IN_LIST(chosenType));
     }
   },
+  'AMAZON.HelpIntent': function(){
+    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
+  },
+  'AMAZON.CancelIntent': function(){
+    this.emit(':tell', CANCEL_MESSAGE);
+  },
+  'AMAZON.StopIntent': function(){
+    this.emit(':tell', STOP_MESSAGE);
+  },
   'Unhandled': function(){
     this.emit(':ask', REPROMPT_TYPE);
   }
@@ -195,14 +205,23 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
     this.attributes['recipe'] = allRecipes[Math.floor(Math.random()*allRecipes.length)]; // Select a random recipe
     this.emit(':ask', SUGGEST_RECIPE(this.attributes['recipe'].name));
   },
-  'AMAZON.YesIntent': function(){
+  'YesIntent': function(){
     this.attributes['instructions'] = this.attributes['recipe'].instructions;
     this.attributes['current_step'] = 0;
     this.handler.state = states.INSTRUCTIONSMODE;
     this.emitWithState('InstructionsIntent');
   },
-  'AMAZON.NoIntent': function(){
+  'NoIntent': function(){
     this.emitWithState('Recipe');
+  },
+  'AMAZON.HelpIntent': function(){
+    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
+  },
+  'AMAZON.CancelIntent': function(){
+    this.emit(':tell', CANCEL_MESSAGE);
+  },
+  'AMAZON.StopIntent': function(){
+    this.emit(':tell', STOP_MESSAGE);
   },
   'Unhandled': function(){
     this.emit(':ask', MISUNDERSTOOD_RECIPE_ANSWER);
@@ -226,6 +245,15 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
   },
   'InstructionsEnded': function(){
     this.emit(':tell', CLOSING_MESSAGE);
+  },
+  'AMAZON.HelpIntent': function(){
+    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
+  },
+  'AMAZON.CancelIntent': function(){
+    this.emit(':tell', CANCEL_MESSAGE);
+  },
+  'AMAZON.StopIntent': function(){
+    this.emit(':tell', STOP_MESSAGE);
   },
   'Unhandled': function(){
     this.emit(':ask', MISUNDERSTOOD_INSTRUCTIONS_ANSWER);

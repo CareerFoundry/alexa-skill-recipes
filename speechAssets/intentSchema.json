@@ -8,8 +8,8 @@
   },
   {"intent": "NextStepIntent"},
   {"intent": "InstructionsIntent"},
-  {"intent": "AMAZON.YesIntent"},
-  {"intent": "AMAZON.NoIntent"},
+  {"intent": "YesIntent"},
+  {"intent": "NoIntent"},
   {"intent": "AMAZON.HelpIntent"},
   {"intent": "AMAZON.CancelIntent"},
   {"intent": "AMAZON.StopIntent"}
