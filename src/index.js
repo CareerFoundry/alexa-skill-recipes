@@ -16,7 +16,13 @@ const CHOOSE_TYPE_MESSAGE = "Welcome to five minute recipes! I know some cool br
 const REPROMPT_TYPE = "You can choose a breakfast, lunch, snack, or dinner recipe. What type of recipe would you like to choose?";
 const MEALTYPE_NOT_IN_LIST = chosenType => `Sorry, I couldn't find any recipes for ${chosenType}. Do you want a breakfast, lunch, dinner or snack recipe?`;
 
-const SUGGEST_RECIPE = recipeName => `I found this awesome ${recipeName} recipe! Do you want me to tell you how to make ${recipeName}?`;
+const RECIPE_ADJECTIVES = [
+  "awesome",
+  "super simple",
+  "fun",
+  "extremely tasty"
+];
+const SUGGEST_RECIPE = recipeName => `I found this ${_pickRandom(RECIPE_ADJECTIVES)} ${recipeName} recipe! Do you want me to tell you how to make ${recipeName}?`;
 const MISUNDERSTOOD_RECIPE_ANSWER = "Please answer with yes or no.";
 const NO_REMAINING_RECIPE = "This was it. I don't know any more recipes. Do you want to select a different meal type?"
 
@@ -167,7 +173,7 @@ const _setMealType = handler => {
 };
 
 const _randomIndexOfArray = (array) => Math.floor(Math.random() * array.length);
-const _randomOfArray = (array) => array[_randomIndexOfArray(array)];
+const _pickRandom = (array) => array[_randomIndexOfArray(array)];
 
 // Handle user input and intents:
 
