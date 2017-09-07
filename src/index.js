@@ -153,7 +153,8 @@ Execution Code: Avoid editing the code below if you don't know JavaScript.
 const _getCurrentStep = handler => handler.attributes['instructions'][handler.attributes['current_step']];
 
 const _selectedMealType = handler => {
-  return handler.event.request.intent.slots.mealType.value;
+  var mealTypeSlot = handler.event.request.intent.slots.mealType;
+  return mealTypeSlot && mealTypeSlot.value;
 };
 const _checkMealTypePresence = handler => {
   return Object.keys(recipes).includes(_selectedMealType(handler));
@@ -196,6 +197,8 @@ const newSessionhandlers = {
 
 const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
   'NewSession': function(startMessage = CHOOSE_TYPE_MESSAGE){
+    // Reset remaining recipes in case the user went back from before
+    this.attributes['remainingRecipes'] = false;
     if(_checkMealTypePresence(this)){
       // Go directly to selecting a meal if mealtype was already present in the slots
       _setMealType(this);
@@ -227,16 +230,15 @@ const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
   'Recipe': function(){
     // Assign all recipes of meal type to be remaining on first iteration
-    var remainingRecipes = remainingRecipes || recipes[this.attributes['mealType']];
-
-    if(remainingRecipes.length > 0){
+    this.attributes['remainingRecipes'] = this.attributes['remainingRecipes'] || recipes[this.attributes['mealType']];
+    if(this.attributes['remainingRecipes'].length > 0){
       // Select random recipe and remove it form remainingRecipes
-      this.attributes['recipe'] = remainingRecipes.splice(_randomIndexOfArray(remainingRecipes); // Select a random recipe
+      this.attributes['recipe'] = this.attributes['remainingRecipes'].splice(_randomIndexOfArray(this.attributes['remainingRecipes']), 1)[0]; // Select a random recipe
       // Ask user to confirm selection
       this.emit(':ask', SUGGEST_RECIPE(this.attributes['recipe'].name));
     }else{
       // There are no more remaining recipes:
-      remainingRecipes = false;
+      this.attributes['remainingRecipes'] = false;
       this.handler.state = states.CANCELMODE;
       this.emitWithState('NoRecipeLeftHandler');
     }
