@@ -239,14 +239,14 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
   'NextStepIntent': function(){
     this.attributes['current_step']++;
 
-    if(this.attributes['current_step'] < this.attributes['instructions'].length){
+    if(this.attributes['current_step'] < this.attributes['instructions'].length - 1){
       this.emitWithState('InstructionsIntent');
     }else{
       this.emitWithState('InstructionsEnded');
     }
   },
   'InstructionsEnded': function(){
-    this.emit(':tell', CLOSING_MESSAGE);
+    this.emit(':tell', `${currentStep} ${CLOSING_MESSAGE}`);
   },
   'AMAZON.HelpIntent': function(){
     this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
