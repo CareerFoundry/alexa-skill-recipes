@@ -25,3 +25,13 @@ YesIntent Roger Roger
 NoIntent no
 NoIntent nope
 NoIntent nah
+NoIntent definitely not
+NoIntent never
+NoIntent no way
+
+DifferentRecipeIntent Give me a different recipe
+DifferentRecipeIntent I don't like this recipe after all
+DifferentRecipeIntent I don't want to eat that
+DifferentRecipeIntent I changed my mind
+DifferentRecipeIntent any other meals
+DifferentRecipeIntent give me something else to eat

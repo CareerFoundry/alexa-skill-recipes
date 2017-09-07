@@ -10,6 +10,7 @@
   {"intent": "InstructionsIntent"},
   {"intent": "YesIntent"},
   {"intent": "NoIntent"},
+  {"intent": "DifferentRecipeIntent"},
   {"intent": "AMAZON.HelpIntent"},
   {"intent": "AMAZON.CancelIntent"},
   {"intent": "AMAZON.StopIntent"}

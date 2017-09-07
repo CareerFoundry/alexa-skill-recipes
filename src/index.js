@@ -290,6 +290,10 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
   'InstructionsEnded': function(){
     this.emit(':tell', `${_getCurrentStep(this)} ${CLOSING_MESSAGE}`);
   },
+  'DifferentRecipeIntent': function(){
+    this.handler.state = states.RECIPEMODE;
+    this.emitWithState('Recipe');
+  },
   'AMAZON.HelpIntent': function(){
     this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
   },
