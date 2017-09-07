@@ -10,7 +10,7 @@ const SKILL_NAME = "Five Minute Recipes";
 const HELP_MESSAGE = "I know how to make tasty meals in less than 5 minutes.";
 const HELP_REPROMPT = "Just ask me for a recipe.";
 const STOP_MESSAGE = "See you next time.";
-const CANCEL_MESSAGE = "Ok.";
+const CANCEL_MESSAGE = "Okay. Do you want to hear a different recipe instead?";
 
 const CHOOSE_TYPE_MESSAGE = "Welcome to five minute recipes! I know some cool breakfast, lunch, snack, or dinner foods. What kind of recipe are you looking for?";
 const REPROMPT_TYPE = "You can choose a breakfast, lunch, snack, or dinner recipe. What type of recipe would you like to choose?";
@@ -148,14 +148,32 @@ Execution Code: Avoid editing the code below if you don't know JavaScript.
 ***********/
 
 const states = {
+  STARTMODE: "_STARTMODE",
   RECIPEMODE: "_RECIPEMODE",
-  INSTRUCTIONSMODE: "_INSTRUCTIONSMODE"
+  INSTRUCTIONSMODE: "_INSTRUCTIONSMODE",
+  CANCELMODE: "_CANCELMODE"
 };
+
 
 const newSessionhandlers = {
   'NewSession': function(){
-    this.handler.state = '';
-    this.emit(':ask', CHOOSE_TYPE_MESSAGE, REPROMPT_TYPE);
+    this.handler.state = states.STARTMODE;
+    this.emitWithState('NewSession');
+  },
+  'AMAZON.HelpIntent': function(){
+    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
+  },
+  'AMAZON.CancelIntent': function(){
+    this.emit(':tell', CANCEL_MESSAGE);
+  },
+  'AMAZON.StopIntent': function(){
+    this.emit(':tell', STOP_MESSAGE);
+  }
+};
+
+const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
+  'NewSession': function(startMessage = CHOOSE_TYPE_MESSAGE){
+    this.emit(':ask', startMessage, REPROMPT_TYPE);
   },
   'ChooseTypeIntent': function(){
     const chosenType = this.event.request.intent.slots.mealType.value;
@@ -180,7 +198,7 @@ const newSessionhandlers = {
   'Unhandled': function(){
     this.emit(':ask', REPROMPT_TYPE);
   }
-};
+});
 
 const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
   'Recipe': function(){
@@ -201,7 +219,8 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
     this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
-    this.emit(':tell', CANCEL_MESSAGE);
+    this.handler.state = states.CANCELMODE;
+    this.emitWithState('AskToCancelIntent');
   },
   'AMAZON.StopIntent': function(){
     this.emit(':tell', STOP_MESSAGE);
@@ -233,7 +252,8 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
     this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
-    this.emit(':tell', CANCEL_MESSAGE);
+    this.handler.state = states.CANCELMODE;
+    this.emitWithState('AskToCancelIntent');
   },
   'AMAZON.StopIntent': function(){
     this.emit(':tell', STOP_MESSAGE);
@@ -244,9 +264,35 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
 });
 
 
+const cancelModeHandlers = Alexa.CreateStateHandler(states.CANCELMODE, {
+  'AskToCancelIntent': function(){
+    this.emit(':ask', CANCEL_MESSAGE);
+  },
+  'YesIntent': function(){
+    this.attributes['current_step'] = 0;
+    this.handler.state = states.STARTMODE;
+    this.emitWithState('NewSession', REPROMPT_TYPE);
+  },
+  'NoIntent': function(){
+    this.emit(':tell', STOP_MESSAGE);
+  },
+  'AMAZON.HelpIntent': function(){
+    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
+  },
+  'AMAZON.CancelIntent': function(){
+    this.emit(':tell', STOP_MESSAGE);
+  },
+  'AMAZON.StopIntent': function(){
+    this.emit(':tell', STOP_MESSAGE);
+  },
+  'Unhandled': function(){
+    this.emit(':ask', MISUNDERSTOOD_RECIPE_ANSWER);
+  }
+});
+
 exports.handler = (event, context, callback) => {
   const alexa = Alexa.handler(event, context);
   alexa.APP_ID = APP_ID;
-  alexa.registerHandlers(newSessionhandlers, recipeModeHandlers, instructionsModeHandlers);
+  alexa.registerHandlers(newSessionhandlers, startModeHandlers, recipeModeHandlers, instructionsModeHandlers, cancelModeHandlers);
   alexa.execute();
 };
