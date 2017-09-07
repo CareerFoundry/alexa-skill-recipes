@@ -18,6 +18,7 @@ const MEALTYPE_NOT_IN_LIST = chosenType => `Sorry, I couldn't find any recipes f
 
 const SUGGEST_RECIPE = recipeName => `I found this awesome ${recipeName} recipe! Do you want me to tell you how to make ${recipeName}?`;
 const MISUNDERSTOOD_RECIPE_ANSWER = "Please answer with yes or no.";
+const NO_REMAINING_RECIPE = "This was it. I don't know any more recipes. Do you want to select a different meal type?"
 
 const FIRST_TIME_INSTRUCTIONS = "Say 'next' to go to the next line of instructions. Say 'repeat' if you didn't understand me or want to hear the last line of instructions again.";
 const MISUNDERSTOOD_INSTRUCTIONS_ANSWER = "Sorry, I didn't understand you there.";
@@ -164,6 +165,9 @@ const _setMealType = handler => {
   return true;
 };
 
+const _randomIndexOfArray = (array) => Math.floor(Math.random() * array.length);
+const _randomOfArray = (array) => array[_randomIndexOfArray(array)];
+
 // Handle user input and intents:
 
 const states = {
@@ -222,9 +226,20 @@ const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 
 const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
   'Recipe': function(){
-    const allRecipes = recipes[this.attributes['mealType']];
-    this.attributes['recipe'] = allRecipes[Math.floor(Math.random()*allRecipes.length)]; // Select a random recipe
-    this.emit(':ask', SUGGEST_RECIPE(this.attributes['recipe'].name));
+    // Assign all recipes of meal type to be remaining on first iteration
+    var remainingRecipes = remainingRecipes || recipes[this.attributes['mealType']];
+
+    if(remainingRecipes.length > 0){
+      // Select random recipe and remove it form remainingRecipes
+      this.attributes['recipe'] = remainingRecipes.splice(_randomIndexOfArray(remainingRecipes); // Select a random recipe
+      // Ask user to confirm selection
+      this.emit(':ask', SUGGEST_RECIPE(this.attributes['recipe'].name));
+    }else{
+      // There are no more remaining recipes:
+      remainingRecipes = false;
+      this.handler.state = states.CANCELMODE;
+      this.emitWithState('NoRecipeLeftHandler');
+    }
   },
   'YesIntent': function(){
     this.attributes['instructions'] = this.attributes['recipe'].instructions;
@@ -240,7 +255,7 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
   },
   'AMAZON.CancelIntent': function(){
     this.handler.state = states.CANCELMODE;
-    this.emitWithState('AskToCancelIntent');
+    this.emitWithState('AskToCancelHandler');
   },
   'AMAZON.StopIntent': function(){
     this.emit(':tell', STOP_MESSAGE);
@@ -272,7 +287,7 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
   },
   'AMAZON.CancelIntent': function(){
     this.handler.state = states.CANCELMODE;
-    this.emitWithState('AskToCancelIntent');
+    this.emitWithState('AskToCancelHandler');
   },
   'AMAZON.StopIntent': function(){
     this.emit(':tell', STOP_MESSAGE);
@@ -284,7 +299,10 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
 
 
 const cancelModeHandlers = Alexa.CreateStateHandler(states.CANCELMODE, {
-  'AskToCancelIntent': function(){
+  'NoRecipeLeftHandler': function(){
+    this.emit(':ask', NO_REMAINING_RECIPE);
+  },
+  'AskToCancelHandler': function(){
     this.emit(':ask', CANCEL_MESSAGE);
   },
   'YesIntent': function(){
