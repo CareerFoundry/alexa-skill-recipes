@@ -148,31 +148,14 @@ Execution Code: Avoid editing the code below if you don't know JavaScript.
 ***********/
 
 const states = {
-  STARTMODE: "_STARTMODE",
   RECIPEMODE: "_RECIPEMODE",
   INSTRUCTIONSMODE: "_INSTRUCTIONSMODE"
 };
 
 const newSessionhandlers = {
   'NewSession': function(){
-    this.handler.state = states.STARTMODE;
-    this.emit(':ask', CHOOSE_TYPE_MESSAGE, REPROMPT_TYPE);
-  },
-  'AMAZON.HelpIntent': function(){
-    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
-  },
-  'AMAZON.CancelIntent': function(){
-    this.emit(':tell', CANCEL_MESSAGE);
-  },
-  'AMAZON.StopIntent': function(){
-    this.emit(':tell', STOP_MESSAGE);
-  }
-};
-
-const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
-  'NewSession': function(){
     this.handler.state = '';
-    this.emitWithState('NewSession');
+    this.emit(':ask', CHOOSE_TYPE_MESSAGE, REPROMPT_TYPE);
   },
   'ChooseTypeIntent': function(){
     const chosenType = this.event.request.intent.slots.mealType.value;
@@ -197,7 +180,7 @@ const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
   'Unhandled': function(){
     this.emit(':ask', REPROMPT_TYPE);
   }
-});
+};
 
 const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
   'Recipe': function(){
@@ -260,9 +243,10 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
   }
 });
 
+
 exports.handler = (event, context, callback) => {
   const alexa = Alexa.handler(event, context);
   alexa.APP_ID = APP_ID;
-  alexa.registerHandlers(newSessionhandlers, startModeHandlers, recipeModeHandlers, instructionsModeHandlers);
+  alexa.registerHandlers(newSessionhandlers, recipeModeHandlers, instructionsModeHandlers);
   alexa.execute();
 };
