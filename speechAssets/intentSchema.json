@@ -6,6 +6,7 @@
       "type": "LIST_OF_MEALTYPES"
     }]
   },
+  {"intent": "IngredientsIntent"},
   {"intent": "NextStepIntent"},
   {"intent": "InstructionsIntent"},
   {"intent": "YesIntent"},

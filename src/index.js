@@ -25,6 +25,9 @@ const RECIPE_ADJECTIVES = [
 const SUGGEST_RECIPE = recipeName => `I found this ${_pickRandom(RECIPE_ADJECTIVES)} ${recipeName} recipe! Do you want me to tell you how to make ${recipeName}?`;
 const MISUNDERSTOOD_RECIPE_ANSWER = "Please answer with yes or no.";
 const NO_REMAINING_RECIPE = "This was it. I don't know any more recipes. Do you want to select a different meal type?"
+const INGREDIENTS_INTRO = "You will need"; // Here follows a list of ingredients
+const INGREDIENTS_ENDING = "Does that sound like a meal you want to eat?"; // Will be said after the list of ingredients
+
 
 const FIRST_TIME_INSTRUCTIONS = "Say 'next' to go to the next line of instructions. Say 'repeat' if you didn't understand me or want to hear the last line of instructions again.";
 const REPROMPT_INSTRUCTIONS = "Say 'next' to go to the next line of instructions. Say 'repeat' if you didn't understand me or want to hear the last line of instructions again.";
@@ -41,6 +44,11 @@ const recipes = {
         "Spread a thick layer of peanut butter onto the bread.",
         "Dump a huge spoonful of jelly on top of the peanut butter and spread it.",
         "There you go! You just made a delicious peanut butter jelly sandwich. Goodbye."
+      ],
+      ingredients: [
+        "peanut butter",
+        "jelly",
+        "bread"
       ]
     },
     {
@@ -51,6 +59,9 @@ const recipes = {
         "Fill it half-way with cereal.",
         "Now fill up the rest of the bowl with milk.",
         "Mmmmmh. This is going to be some gooood breakfast."
+      ],
+      ingredients: [
+        "cereal"
       ]
     },
     {
@@ -62,6 +73,10 @@ const recipes = {
         "Take out the bacon and put it aside. Get the eggs, open them and gently let their content into the pan.",
         "The eggs are done when all the egg white has become fully white and the yoke is still slightly liquid.",
         "Bam! That's what I call some sweet, awesome breakfast!"
+      ],
+      ingredients: [
+        "bacon",
+        "eggs"
       ]
     }
   ],
@@ -73,6 +88,11 @@ const recipes = {
         "Fill two pots with water, place them on the stove and turn up the heat all the way. Once the water is boiling put the potatoes in one pot and the broccoli in the other.",
         "Now, wait until the potatoes and broccoli have exactly the consistency you like.",
         "Excellent! This is some gooood eating."
+      ],
+      ingredients: [
+        "potatoes",
+        "broccoli",
+        "water"
       ]
     },
     {
@@ -81,6 +101,9 @@ const recipes = {
         "Call Subway and order a sandwich you really like.",
         "Wait until they deliver it. Maybe do some situps. That's really good for your body, so I've heard.",
         "Once the sandwich deliverer arrives, rejoice!"
+      ],
+      ingredients: [
+        "nothing"
       ]
     },
     {
@@ -90,6 +113,12 @@ const recipes = {
         "Germany, France, Poland, Italy, ... So much to see.",
         "Oh right... Brolied Lobster Tails with Garlic and Chili Butter. You don't really don't think you can do that in 5 minutes, right?",
         "Well you can't."
+      ],
+      ingredients: [
+        "lobster tail",
+        "garlic",
+        "chili",
+        "butter"
       ]
     }
   ],
@@ -101,6 +130,10 @@ const recipes = {
         "Preheat the oven at 180 degrees celcius.",
         "Once the oven is preheated put the pizza in there. But without the plastic wrap! That's really not fun to eat. I tell you, I knew a guy... but that's a story for another time.",
         "After 10 to 15 minutes take the pizza out of the oven. If you're really intro crusty pizza, you can wait 20 minutes. I've heard burned pizza is not as unhealthy as people might think."
+      ],
+      ingredients: [
+        "frozen pizza",
+        "an oven"
       ]
     },
     {
@@ -109,6 +142,10 @@ const recipes = {
         "For this recipe you just need ice cream.",
         "Open your freezer, get the ice cream and a big spoon. Only weird people use small spoons to eat ice cream. Don't be weird.",
         "Enjoy the ice cream. Don't take too big of a bite! You might get brain freeze."
+      ],
+      ingredients: [
+        "ice cream",
+        "a spoon"
       ]
     },
     {
@@ -120,6 +157,11 @@ const recipes = {
         "Put the steak in the heated pan and shortly sear it from both sides.",
         "Now, turn down the heat on the stove and keep frying the steak for as long as you want. It really depends on how medium or well done you like your steak. So it's kind of hard for me to tell you how long to fry it. Just do what your heart tells you to do.",
         "Perfect. This is a really fancy meal."
+      ],
+      ingredients: [
+        "steak",
+        "fries",
+        "oil"
       ]
     }
   ],
@@ -130,6 +172,9 @@ const recipes = {
         "Go to the closest supermarket and buy a bag of chips",
         "Open the bag.",
         "Enjoy!"
+      ],
+      ingredients: [
+        "chips"
       ]
     },
     {
@@ -138,6 +183,9 @@ const recipes = {
         "If you happen to live in the jungle, you might find a banana on a tree somewhere. If you don't, you might have to go to a market close by.",
         "Pick a yellow banana. Don't pick a green banana. Those have to sit for a while before being edible. And we want this recipe to be done within 5 minutes. So seriously, don't screw this up. Pick a yellow banana!",
         "Feeling like a monkey today? Well that's important sometimes, too."
+      ],
+      ingredients: [
+        "banana"
       ]
     },
     {
@@ -146,6 +194,9 @@ const recipes = {
         "Go to a grocery store and buy some beef jerkey.",
         "Great! Now open the bag.",
         "Have fun eating."
+      ],
+      ingredients: [
+        "beef jerkey"
       ]
     }
   ]
@@ -249,6 +300,9 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
       this.handler.state = states.CANCELMODE;
       this.emitWithState('NoRecipeLeftHandler');
     }
+  },
+  'IngredientsIntent': function(){
+    this.emit(':ask', `${INGREDIENTS_INTRO} ${this.attributes['recipe'].ingredients}. ${INGREDIENTS_ENDING}`)
   },
   'YesIntent': function(){
     this.attributes['instructions'] = this.attributes['recipe'].instructions;
