@@ -147,6 +147,25 @@ const recipes = {
 Execution Code: Avoid editing the code below if you don't know JavaScript.
 ***********/
 
+// Private methods (this is the actual code logic behind the app)
+
+const _getCurrentStep = handler => handler.attributes['instructions'][handler.attributes['current_step']];
+
+const _selectedMealType = handler => {
+  return handler.event.request.intent.slots.mealType.value;
+};
+const _checkMealTypePresence = handler => {
+  return Object.keys(recipes).includes(_selectedMealType(handler));
+};
+const _setMealType = handler => {
+  handler.attributes['mealType'] = _selectedMealType(handler);
+  handler.handler.state = states.RECIPEMODE;
+  handler.emitWithState("Recipe");
+  return true;
+};
+
+// Handle user input and intents:
+
 const states = {
   STARTMODE: "_STARTMODE",
   RECIPEMODE: "_RECIPEMODE",
@@ -173,17 +192,18 @@ const newSessionhandlers = {
 
 const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
   'NewSession': function(startMessage = CHOOSE_TYPE_MESSAGE){
-    this.emit(':ask', startMessage, REPROMPT_TYPE);
+    if(_checkMealTypePresence(this)){
+      // Go directly to selecting a meal if mealtype was already present in the slots
+      _setMealType(this);
+    }else{
+      this.emit(':ask', startMessage, REPROMPT_TYPE);
+    }
   },
   'ChooseTypeIntent': function(){
-    const chosenType = this.event.request.intent.slots.mealType.value;
-
-    if(Object.keys(recipes).includes(chosenType)){
-      this.attributes['mealType'] = chosenType;
-      this.handler.state = states.RECIPEMODE;
-      this.emitWithState("Recipe");
+    if(_checkMealTypePresence(this)){
+      _setMealType(this);
     }else{
-      this.emit(':ask', MEALTYPE_NOT_IN_LIST(chosenType));
+      this.emit(':ask', MEALTYPE_NOT_IN_LIST(_selectedMealType(this)));
     }
   },
   'AMAZON.HelpIntent': function(){
@@ -232,9 +252,8 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
 
 const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMODE, {
   'InstructionsIntent': function(){
-    const currentStep = this.attributes['instructions'][this.attributes['current_step']];
     const firstTimeInstructions = (this.attributes['current_step'] == 0) ? FIRST_TIME_INSTRUCTIONS : '';
-    this.emit(':ask', `${currentStep} ${firstTimeInstructions}`);
+    this.emit(':ask', `${_getCurrentStep(this)} ${firstTimeInstructions}`);
   },
   'NextStepIntent': function(){
     this.attributes['current_step']++;
@@ -246,7 +265,7 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
     }
   },
   'InstructionsEnded': function(){
-    this.emit(':tell', `${currentStep} ${CLOSING_MESSAGE}`);
+    this.emit(':tell', `${_getCurrentStep(this)} ${CLOSING_MESSAGE}`);
   },
   'AMAZON.HelpIntent': function(){
     this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
