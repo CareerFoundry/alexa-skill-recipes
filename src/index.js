@@ -27,6 +27,7 @@ const MISUNDERSTOOD_RECIPE_ANSWER = "Please answer with yes or no.";
 const NO_REMAINING_RECIPE = "This was it. I don't know any more recipes. Do you want to select a different meal type?"
 
 const FIRST_TIME_INSTRUCTIONS = "Say 'next' to go to the next line of instructions. Say 'repeat' if you didn't understand me or want to hear the last line of instructions again.";
+const REPROMPT_INSTRUCTIONS = "Say 'next' to go to the next line of instructions. Say 'repeat' if you didn't understand me or want to hear the last line of instructions again.";
 const MISUNDERSTOOD_INSTRUCTIONS_ANSWER = "Sorry, I didn't understand you there.";
 const CLOSING_MESSAGE = "Wonderful. Hope you have a great meal, or as the Germans say, Guten Appetit!";
 
@@ -276,7 +277,7 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
 const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMODE, {
   'InstructionsIntent': function(){
     const firstTimeInstructions = (this.attributes['current_step'] == 0) ? FIRST_TIME_INSTRUCTIONS : '';
-    this.emit(':ask', `${_getCurrentStep(this)} ${firstTimeInstructions}`);
+    this.emit(':ask', `${_getCurrentStep(this)} ${firstTimeInstructions}`, REPROMPT_INSTRUCTIONS);
   },
   'NextStepIntent': function(){
     this.attributes['current_step']++;
