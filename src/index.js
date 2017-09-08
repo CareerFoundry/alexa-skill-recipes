@@ -169,7 +169,7 @@ const recipes = {
     {
       name: "Chips",
       instructions: [
-        "Go to the closest supermarket and buy a bag of chips",
+        "Go to the closest supermarket and buy a bag of chips.",
         "Open the bag.",
         "Enjoy!"
       ],
@@ -210,9 +210,16 @@ Execution Code: Avoid editing the code below if you don't know JavaScript.
 
 const _getCurrentStep = handler => handler.attributes['instructions'][handler.attributes['current_step']];
 
+const _intentAndSlotPresent = handler => {
+  try {
+    return handler.event.request.intent.slots.mealType;
+  }
+  catch (e){
+    return false;
+  }
+};
 const _selectedMealType = handler => {
-  var mealTypeSlot = handler.event.request.intent.slots.mealType;
-  return mealTypeSlot && mealTypeSlot.value;
+  return _intentAndSlotPresent(handler) && handler.event.request.intent.slots.mealType.value;
 };
 const _checkMealTypePresence = handler => {
   return Object.keys(recipes).includes(_selectedMealType(handler));
@@ -250,6 +257,9 @@ const newSessionhandlers = {
   },
   'AMAZON.StopIntent': function(){
     this.emit(':tell', STOP_MESSAGE);
+  },
+  'Unhandled': function(){
+    this.emit(':ask', REPROMPT_TYPE);
   }
 };
 
