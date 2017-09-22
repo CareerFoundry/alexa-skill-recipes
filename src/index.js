@@ -320,7 +320,9 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
     }
   },
   'IngredientsIntent': function(){
-    this.emit(':ask', `${INGREDIENTS_INTRO} ${this.attributes['recipe'].ingredients}. ${INGREDIENTS_ENDING}`)
+    var ingredients = this.attributes['recipe'].ingredients.join(', ').replace(/,(?!.*,)/gmi, ' and'); // Add 'and' before last ingredient
+
+    this.emit(':ask', `${INGREDIENTS_INTRO} ${ingredients}. ${INGREDIENTS_ENDING}`)
   },
   'YesIntent': function(){
     this.attributes['instructions'] = this.attributes['recipe'].instructions;
