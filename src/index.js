@@ -7,10 +7,18 @@ Data: Customize the data below as you please.
 ***********/
 
 const SKILL_NAME = "Five Minute Recipes";
-const HELP_MESSAGE = "I know how to make tasty meals in less than 5 minutes.";
-const HELP_REPROMPT = "Just ask me for a recipe.";
 const STOP_MESSAGE = "See you next time.";
 const CANCEL_MESSAGE = "Okay. Do you want to hear a different recipe instead?";
+
+// HELP_MESSAGE, HELP_REPROMPT
+const HELP_START = "I know how to make tasty meals in less than 5 minutes.";
+const HELP_START_REPROMPT = "Just ask me for a recipe.";
+const HELP_RECIPE = "I know how to make tasty meals in less than 5 minutes.";
+const HELP_RECIPE_REPROMPT = "Just ask me for a recipe.";
+const HELP_INSTRUCTIONS = "I know how to make tasty meals in less than 5 minutes.";
+const HELP_INSTRUCTIONS_REPROMPT = "Just ask me for a recipe.";
+const HELP_MESSAGE = "I know how to make tasty meals in less than 5 minutes.";
+const HELP_MESSAGE_REPROMPT = "Just ask me for a recipe.";
 
 const CHOOSE_TYPE_MESSAGE = "Welcome to five minute recipes! I know some cool breakfast, lunch, snack, or dinner foods. What kind of recipe are you looking for?";
 const REPROMPT_TYPE = "You can choose a breakfast, lunch, snack, or dinner recipe. What type of recipe would you like to choose?";
@@ -250,7 +258,7 @@ const newSessionhandlers = {
     this.emitWithState('NewSession');
   },
   'AMAZON.HelpIntent': function(){
-    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
+    this.emit(':ask', HELP_START, HELP_START_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
     this.emit(':tell', CANCEL_MESSAGE);
@@ -282,7 +290,7 @@ const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     }
   },
   'AMAZON.HelpIntent': function(){
-    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
+    this.emit(':ask', HELP_START, HELP_START_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
     this.emit(':tell', CANCEL_MESSAGE);
@@ -324,7 +332,7 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
     this.emitWithState('Recipe');
   },
   'AMAZON.HelpIntent': function(){
-    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
+    this.emit(':ask', HELP_RECIPE, HELP_RECIPE_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
     this.handler.state = states.CANCELMODE;
@@ -360,7 +368,7 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
     this.emitWithState('Recipe');
   },
   'AMAZON.HelpIntent': function(){
-    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
+    this.emit(':ask', HELP_INSTRUCTIONS, HELP_INSTRUCTIONS_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
     this.handler.state = states.CANCELMODE;
@@ -391,7 +399,7 @@ const cancelModeHandlers = Alexa.CreateStateHandler(states.CANCELMODE, {
     this.emit(':tell', STOP_MESSAGE);
   },
   'AMAZON.HelpIntent': function(){
-    this.emit(':ask', HELP_MESSAGE, HELP_REPROMPT);
+    this.emit(':ask', HELP_MESSAGE, HELP_MESSAGE_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
     this.emit(':tell', STOP_MESSAGE);
