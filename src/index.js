@@ -148,7 +148,7 @@ const recipes = {
       name: "Ice cream",
       instructions: [
         "For this recipe you just need ice cream.",
-        "Open your freezer, get the ice cream and a big spoon. Only weird people use small spoons to eat ice cream. Don't be weird.",
+        "Open your freezer, get the ice cream and a small spoon. Only weird people use big spoons to eat ice cream. Don't be weird.",
         "Enjoy the ice cream. Don't take too big of a bite! You might get brain freeze."
       ],
       ingredients: [
