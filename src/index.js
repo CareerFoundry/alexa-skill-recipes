@@ -10,15 +10,14 @@ const SKILL_NAME = "Five Minute Recipes";
 const STOP_MESSAGE = "See you next time.";
 const CANCEL_MESSAGE = "Okay. Do you want to hear a different recipe instead?";
 
-// HELP_MESSAGE, HELP_REPROMPT
 const HELP_START = "I know how to make tasty meals in less than 5 minutes.";
-const HELP_START_REPROMPT = "Just ask me for a recipe.";
-const HELP_RECIPE = "I know how to make tasty meals in less than 5 minutes.";
+const HELP_START_REPROMPT = "Just tell me what type of meal you'd like.";
+const HELP_RECIPE = "Choose whatever recipe you want.";
 const HELP_RECIPE_REPROMPT = "Just ask me for a recipe.";
-const HELP_INSTRUCTIONS = "I know how to make tasty meals in less than 5 minutes.";
-const HELP_INSTRUCTIONS_REPROMPT = "Just ask me for a recipe.";
-const HELP_MESSAGE = "I know how to make tasty meals in less than 5 minutes.";
-const HELP_MESSAGE_REPROMPT = "Just ask me for a recipe.";
+const HELP_INSTRUCTIONS = "You can ask me to repeat the instructions or say 'next' to hear the next line of instructions.";
+const HELP_INSTRUCTIONS_REPROMPT = "Hello.";
+const HELP_CANCEL = "You can hear a new recipe or just not eat.";
+const HELP_CANCEL_REPROMPT = "Not eating so far caused 100% of test subjects to die.";
 
 const CHOOSE_TYPE_MESSAGE = "Welcome to five minute recipes! I know some cool breakfast, lunch, snack, or dinner foods. What kind of recipe are you looking for?";
 const REPROMPT_TYPE = "You can choose a breakfast, lunch, snack, or dinner recipe. What type of recipe would you like to choose?";
@@ -233,6 +232,7 @@ const _checkMealTypePresence = handler => {
   return Object.keys(recipes).includes(_selectedMealType(handler));
 };
 const _setMealType = handler => {
+  handler.attributes['remainingRecipes'] = false; // Reset remaining recipes in case the user went back from before
   handler.attributes['mealType'] = _selectedMealType(handler);
   handler.handler.state = states.RECIPEMODE;
   handler.emitWithState("Recipe");
@@ -273,8 +273,6 @@ const newSessionhandlers = {
 
 const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
   'NewSession': function(startMessage = CHOOSE_TYPE_MESSAGE){
-    // Reset remaining recipes in case the user went back from before
-    this.attributes['remainingRecipes'] = false;
     if(_checkMealTypePresence(this)){
       // Go directly to selecting a meal if mealtype was already present in the slots
       _setMealType(this);
@@ -393,6 +391,7 @@ const cancelModeHandlers = Alexa.CreateStateHandler(states.CANCELMODE, {
     this.emit(':ask', CANCEL_MESSAGE);
   },
   'YesIntent': function(){
+    this.attributes['remainingRecipes'] = false;
     this.attributes['current_step'] = 0;
     this.handler.state = states.STARTMODE;
     this.emitWithState('NewSession', REPROMPT_TYPE);
@@ -401,7 +400,7 @@ const cancelModeHandlers = Alexa.CreateStateHandler(states.CANCELMODE, {
     this.emit(':tell', STOP_MESSAGE);
   },
   'AMAZON.HelpIntent': function(){
-    this.emit(':ask', HELP_MESSAGE, HELP_MESSAGE_REPROMPT);
+    this.emit(':ask', HELP_CANCEL, HELP_CANCEL_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
     this.emit(':tell', STOP_MESSAGE);
