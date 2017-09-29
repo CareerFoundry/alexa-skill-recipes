@@ -304,6 +304,10 @@ const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 
 const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
   'Recipe': function(){
+    if(this.new){
+      this.attributes['remainingRecipes'] = recipes[handler.attributes['mealType']];
+    }
+
     if(this.attributes['remainingRecipes'].length > 0){
       // Select random recipe and remove it form remainingRecipes
       this.attributes['recipe'] = this.attributes['remainingRecipes'].splice(_randomIndexOfArray(this.attributes['remainingRecipes']), 1)[0]; // Select a random recipe
