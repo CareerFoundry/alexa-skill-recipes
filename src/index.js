@@ -232,8 +232,9 @@ const _checkMealTypePresence = handler => {
   return Object.keys(recipes).includes(_selectedMealType(handler));
 };
 const _setMealType = handler => {
-  handler.attributes['remainingRecipes'] = false; // Reset remaining recipes in case the user went back from before
+  // Reset remaining recipes in case the user went back from before
   handler.attributes['mealType'] = _selectedMealType(handler);
+  handler.attributes['remainingRecipes'] = recipes[handler.attributes['mealType']];
   handler.handler.state = states.RECIPEMODE;
   handler.emitWithState("Recipe");
   return true;
@@ -303,16 +304,13 @@ const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
 
 const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
   'Recipe': function(){
-    // Assign all recipes of meal type to be remaining on first iteration
-    this.attributes['remainingRecipes'] = this.attributes['remainingRecipes'] || recipes[this.attributes['mealType']];
     if(this.attributes['remainingRecipes'].length > 0){
       // Select random recipe and remove it form remainingRecipes
       this.attributes['recipe'] = this.attributes['remainingRecipes'].splice(_randomIndexOfArray(this.attributes['remainingRecipes']), 1)[0]; // Select a random recipe
       // Ask user to confirm selection
       this.emit(':ask', SUGGEST_RECIPE(this.attributes['recipe'].name));
     }else{
-      // There are no more remaining recipes:
-      this.attributes['remainingRecipes'] = false;
+      this.attributes['remainingRecipes'] = recipes[this.attributes['mealType']];
       this.handler.state = states.CANCELMODE;
       this.emitWithState('NoRecipeLeftHandler');
     }
@@ -391,7 +389,6 @@ const cancelModeHandlers = Alexa.CreateStateHandler(states.CANCELMODE, {
     this.emit(':ask', CANCEL_MESSAGE);
   },
   'YesIntent': function(){
-    this.attributes['remainingRecipes'] = false;
     this.attributes['current_step'] = 0;
     this.handler.state = states.STARTMODE;
     this.emitWithState('NewSession', REPROMPT_TYPE);
