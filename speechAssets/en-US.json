@@ -1,0 +1,143 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "quickmeal",
+            "intents": [
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "ChooseTypeIntent",
+                    "slots": [
+                        {
+                            "name": "mealType",
+                            "type": "mealType"
+                        }
+                    ],
+                    "samples": [
+                        "for {mealType}",
+                        " with {mealType}",
+                        "{mealType} is what I really need right now",
+                        "Give me a {mealType} recipe",
+                        "I want to eat {mealType}",
+                        "meals for {mealType}",
+                        "recipes for {mealType}",
+                        "{mealType} recipes",
+                        "{mealType}"
+                    ]
+                },
+                {
+                    "name": "IngredientsIntent",
+                    "slots": [],
+                    "samples": [
+                        "what do i need",
+                        " what do i need to make this",
+                        "what can you tell me about the contents",
+                        "nutrition facts",
+                        "what are the ingredients",
+                        "ingredients",
+                        "What's in it"
+                    ]
+                },
+                {
+                    "name": "InstructionsIntent",
+                    "slots": [],
+                    "samples": [
+                        "One more time please",
+                        "What",
+                        "I didn't hear you there",
+                        "Explain that to me again",
+                        "Repeat this step",
+                        "Repeat"
+                    ]
+                },
+                {
+                    "name": "NextStepIntent",
+                    "slots": [],
+                    "samples": [
+                        "Keep going",
+                        "Next step",
+                        "Next",
+                        "Got it",
+                        "Okay"
+                    ]
+                },
+                {
+                    "name": "YesIntent",
+                    "slots": [],
+                    "samples": [
+                        "Roger Roger",
+                        "sure",
+                        "definitely",
+                        "yep",
+                        "yes"
+                    ]
+                },
+                {
+                    "name": "NoIntent",
+                    "slots": [],
+                    "samples": [
+                        "no way",
+                        "never",
+                        "definitely not",
+                        "nah",
+                        "nope",
+                        "no"
+                    ]
+                },
+                {
+                    "name": "DifferentRecipeIntent",
+                    "slots": [],
+                    "samples": [
+                        "give me something else to eat",
+                        "any other meals",
+                        "I changed my mind",
+                        "I don't want to eat that",
+                        "I don't like this recipe after all",
+                        "Give me a different recipe"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "mealType",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "Snack"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Dinner"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Lunch"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Breakfast"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
