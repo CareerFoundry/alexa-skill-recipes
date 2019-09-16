@@ -268,7 +268,7 @@ const newSessionhandlers = {
     this.emit(':tell', STOP_MESSAGE);
   },
   'Unhandled': function(){
-    this.emit(':ask', REPROMPT_TYPE);
+    this.emit(':ask', REPROMPT_TYPE, REPROMPT_TYPE);
   }
 };
 
@@ -285,7 +285,7 @@ const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     if(_checkMealTypePresence(this)){
       _setMealType(this);
     }else{
-      this.emit(':ask', MEALTYPE_NOT_IN_LIST(_selectedMealType(this)));
+      this.emit(':ask', MEALTYPE_NOT_IN_LIST(_selectedMealType(this)), MEALTYPE_NOT_IN_LIST(_selectedMealType(this)));
     }
   },
   'AMAZON.HelpIntent': function(){
@@ -298,21 +298,21 @@ const startModeHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     this.emit(':tell', STOP_MESSAGE);
   },
   'Unhandled': function(){
-    this.emit(':ask', REPROMPT_TYPE);
+    this.emit(':ask', REPROMPT_TYPE, REPROMPT_TYPE);
   }
 });
 
 const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
   'Recipe': function(){
     if(this.new){
-      this.attributes['remainingRecipes'] = recipes[handler.attributes['mealType']];
+      this.attributes['remainingRecipes'] = recipes[this.handler.attributes['mealType']];
     }
 
     if(this.attributes['remainingRecipes'].length > 0){
       // Select random recipe and remove it form remainingRecipes
       this.attributes['recipe'] = this.attributes['remainingRecipes'].splice(_randomIndexOfArray(this.attributes['remainingRecipes']), 1)[0]; // Select a random recipe
       // Ask user to confirm selection
-      this.emit(':ask', SUGGEST_RECIPE(this.attributes['recipe'].name));
+      this.emit(':ask', SUGGEST_RECIPE(this.attributes['recipe'].name), SUGGEST_RECIPE(this.attributes['recipe'].name));
     }else{
       this.attributes['remainingRecipes'] = recipes[this.attributes['mealType']];
       this.handler.state = states.CANCELMODE;
@@ -322,7 +322,7 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
   'IngredientsIntent': function(){
     var ingredients = this.attributes['recipe'].ingredients.join(', ').replace(/,(?!.*,)/gmi, ' and'); // Add 'and' before last ingredient
 
-    this.emit(':ask', `${INGREDIENTS_INTRO} ${ingredients}. ${INGREDIENTS_ENDING}`)
+    this.emit(':ask', `${INGREDIENTS_INTRO} ${ingredients}. ${INGREDIENTS_ENDING}`, `${INGREDIENTS_INTRO} ${ingredients}. ${INGREDIENTS_ENDING}`)
   },
   'AMAZON.YesIntent': function(){
     this.attributes['instructions'] = this.attributes['recipe'].instructions;
@@ -344,13 +344,13 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
     this.emit(':tell', STOP_MESSAGE);
   },
   'Unhandled': function(){
-    this.emit(':ask', MISUNDERSTOOD_RECIPE_ANSWER);
+    this.emit(':ask', MISUNDERSTOOD_RECIPE_ANSWER, MISUNDERSTOOD_RECIPE_ANSWER);
   }
 });
 
 const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMODE, {
   'InstructionsIntent': function(){
-    const firstTimeInstructions = (this.attributes['current_step'] == 0) ? FIRST_TIME_INSTRUCTIONS : '';
+    const firstTimeInstructions = (this.attributes['current_step'] === 0) ? FIRST_TIME_INSTRUCTIONS : '';
     this.emit(':ask', `${_getCurrentStep(this)} ${firstTimeInstructions}`, REPROMPT_INSTRUCTIONS);
   },
   'NextStepIntent': function(){
@@ -380,17 +380,17 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
     this.emit(':tell', STOP_MESSAGE);
   },
   'Unhandled': function(){
-    this.emit(':ask', MISUNDERSTOOD_INSTRUCTIONS_ANSWER);
+    this.emit(':ask', MISUNDERSTOOD_INSTRUCTIONS_ANSWER, MISUNDERSTOOD_INSTRUCTIONS_ANSWER);
   }
 });
 
 
 const cancelModeHandlers = Alexa.CreateStateHandler(states.CANCELMODE, {
   'NoRecipeLeftHandler': function(){
-    this.emit(':ask', NO_REMAINING_RECIPE);
+    this.emit(':ask', NO_REMAINING_RECIPE, NO_REMAINING_RECIPE);
   },
   'AskToCancelHandler': function(){
-    this.emit(':ask', CANCEL_MESSAGE);
+    this.emit(':ask', CANCEL_MESSAGE, CANCEL_MESSAGE);
   },
   'AMAZON.YesIntent': function(){
     this.attributes['current_step'] = 0;
@@ -410,7 +410,7 @@ const cancelModeHandlers = Alexa.CreateStateHandler(states.CANCELMODE, {
     this.emit(':tell', STOP_MESSAGE);
   },
   'Unhandled': function(){
-    this.emit(':ask', MISUNDERSTOOD_RECIPE_ANSWER);
+    this.emit(':ask', MISUNDERSTOOD_RECIPE_ANSWER, MISUNDERSTOOD_RECIPE_ANSWER);
   }
 });
 
