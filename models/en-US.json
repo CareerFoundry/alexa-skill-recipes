@@ -1,7 +1,7 @@
 {
   "interactionModel": {
       "languageModel": {
-          "invocationName": "five minute meal",
+          "invocationName": "five minute recipe",
           "intents": [
               {
                   "name": "AMAZON.FallbackIntent",
