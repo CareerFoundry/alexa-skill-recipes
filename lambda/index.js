@@ -6,7 +6,7 @@ const APP_ID = undefined;
 Data: Customize the data below as you please.
 ***********/
 
-const SKILL_NAME = "Five Minute Recipes";
+const SKILL_NAME = "Five Minute Recipe";
 const STOP_MESSAGE = "See you next time.";
 const CANCEL_MESSAGE = "Okay. Do you want to hear a different recipe instead?";
 
