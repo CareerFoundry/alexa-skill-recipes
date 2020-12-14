@@ -12,14 +12,14 @@ const CANCEL_MESSAGE = "Okay. Do you want to hear a different recipe instead?";
 
 const HELP_START = "I know how to make tasty meals in less than 5 minutes.";
 const HELP_START_REPROMPT = "Just tell me what type of meal you'd like.";
-const HELP_RECIPE = "Choose whatever recipe you want.";
-const HELP_RECIPE_REPROMPT = "Just ask me for a recipe.";
+const HELP_RECIPE = "Choose whatever recipe you want. Do you want to proceed?";
+const HELP_RECIPE_REPROMPT = "Choose whatever recipe you want. Do you want to proceed?";
 const HELP_INSTRUCTIONS = "You can ask me to repeat the instructions or say 'next' to hear the next line of instructions.";
-const HELP_INSTRUCTIONS_REPROMPT = "Hello.";
+const HELP_INSTRUCTIONS_REPROMPT = "You can ask me to repeat the instructions or say 'next' to hear the next line of instructions.";
 const HELP_CANCEL = "You can hear a new recipe or just not eat.";
 const HELP_CANCEL_REPROMPT = "Not eating so far caused 100% of test subjects to die.";
 
-const CHOOSE_TYPE_MESSAGE = "Welcome to five minute recipes! I know some cool breakfast, lunch, snack, or dinner foods. What kind of recipe are you looking for?";
+const CHOOSE_TYPE_MESSAGE = `Welcome to ${SKILL_NAME}! I know some cool breakfast, lunch, snack, or dinner foods. What kind of recipe are you looking for?`;
 const REPROMPT_TYPE = "You can choose a breakfast, lunch, snack, or dinner recipe. What type of recipe would you like to choose?";
 const MEALTYPE_NOT_IN_LIST = chosenType => `Sorry, I couldn't find any recipes for ${chosenType}. Do you want a breakfast, lunch, dinner or snack recipe?`;
 
