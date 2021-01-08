@@ -8,16 +8,14 @@ Data: Customize the data below as you please.
 
 const SKILL_NAME = "Five Minute Recipes";
 const STOP_MESSAGE = "See you next time.";
-const CANCEL_MESSAGE = "Okay. Do you want to hear a different recipe instead?";
+const CANCEL_MESSAGE = "Okay. See you next time.";
 
-const HELP_START = "I know how to make tasty meals in less than 5 minutes.";
-const HELP_START_REPROMPT = "Just tell me what type of meal you'd like.";
+const HELP_START = "I know how to make tasty meals in less than 5 minutes. You can choose a breakfast, lunch, snack, or dinner recipe. What type of recipe would you like to choose? Just say it!";
+const HELP_START_REPROMPT = "I have recipes for breakfast, lunch, snack and dinner. Just tell me what type of meal you'd like.";
 const HELP_RECIPE = "Choose whatever recipe you want. Do you want to proceed?";
 const HELP_RECIPE_REPROMPT = "Choose whatever recipe you want. Do you want to proceed?";
-const HELP_INSTRUCTIONS = "You can ask me to repeat the instructions or say 'next' to hear the next line of instructions.";
-const HELP_INSTRUCTIONS_REPROMPT = "You can ask me to repeat the instructions or say 'next' to hear the next line of instructions.";
-const HELP_CANCEL = "You can hear a new recipe or just not eat.";
-const HELP_CANCEL_REPROMPT = "Not eating so far caused 100% of test subjects to die.";
+const HELP_INSTRUCTIONS = "You can ask me to repeat the instructions or say 'next' to hear the next line of instructions. What is your choice?";
+const HELP_INSTRUCTIONS_REPROMPT = "You can ask me to repeat the instructions or say 'next' to hear the next line of instructions. What is your choice?";
 
 const CHOOSE_TYPE_MESSAGE = `Welcome to ${SKILL_NAME}! I know some cool breakfast, lunch, snack, or dinner foods. What kind of recipe are you looking for?`;
 const REPROMPT_TYPE = "You can choose a breakfast, lunch, snack, or dinner recipe. What type of recipe would you like to choose?";
@@ -248,8 +246,7 @@ const _pickRandom = (array) => array[_randomIndexOfArray(array)];
 const states = {
   STARTMODE: "_STARTMODE",
   RECIPEMODE: "_RECIPEMODE",
-  INSTRUCTIONSMODE: "_INSTRUCTIONSMODE",
-  CANCELMODE: "_CANCELMODE"
+  INSTRUCTIONSMODE: "_INSTRUCTIONSMODE"
 };
 
 
@@ -337,8 +334,7 @@ const recipeModeHandlers = Alexa.CreateStateHandler(states.RECIPEMODE, {
     this.emit(':ask', HELP_RECIPE, HELP_RECIPE_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
-    this.handler.state = states.CANCELMODE;
-    this.emitWithState('AskToCancelHandler');
+    this.emit(':tell', CANCEL_MESSAGE);
   },
   'AMAZON.StopIntent': function(){
     this.emit(':tell', STOP_MESSAGE);
@@ -373,8 +369,7 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
     this.emit(':ask', HELP_INSTRUCTIONS, HELP_INSTRUCTIONS_REPROMPT);
   },
   'AMAZON.CancelIntent': function(){
-    this.handler.state = states.CANCELMODE;
-    this.emitWithState('AskToCancelHandler');
+      this.emit(':tell', CANCEL_MESSAGE);
   },
   'AMAZON.StopIntent': function(){
     this.emit(':tell', STOP_MESSAGE);
@@ -385,38 +380,10 @@ const instructionsModeHandlers = Alexa.CreateStateHandler(states.INSTRUCTIONSMOD
 });
 
 
-const cancelModeHandlers = Alexa.CreateStateHandler(states.CANCELMODE, {
-  'NoRecipeLeftHandler': function(){
-    this.emit(':ask', NO_REMAINING_RECIPE, NO_REMAINING_RECIPE);
-  },
-  'AskToCancelHandler': function(){
-    this.emit(':ask', CANCEL_MESSAGE, CANCEL_MESSAGE);
-  },
-  'AMAZON.YesIntent': function(){
-    this.attributes['current_step'] = 0;
-    this.handler.state = states.STARTMODE;
-    this.emitWithState('NewSession', REPROMPT_TYPE);
-  },
-  'AMAZON.NoIntent': function(){
-    this.emit(':tell', STOP_MESSAGE);
-  },
-  'AMAZON.HelpIntent': function(){
-    this.emit(':ask', HELP_CANCEL, HELP_CANCEL_REPROMPT);
-  },
-  'AMAZON.CancelIntent': function(){
-    this.emit(':tell', STOP_MESSAGE);
-  },
-  'AMAZON.StopIntent': function(){
-    this.emit(':tell', STOP_MESSAGE);
-  },
-  'Unhandled': function(){
-    this.emit(':ask', MISUNDERSTOOD_RECIPE_ANSWER, MISUNDERSTOOD_RECIPE_ANSWER);
-  }
-});
 
 exports.handler = (event, context, callback) => {
   const alexa = Alexa.handler(event, context);
   alexa.APP_ID = APP_ID;
-  alexa.registerHandlers(newSessionhandlers, startModeHandlers, recipeModeHandlers, instructionsModeHandlers, cancelModeHandlers);
+  alexa.registerHandlers(newSessionhandlers, startModeHandlers, recipeModeHandlers, instructionsModeHandlers);
   alexa.execute();
 };
